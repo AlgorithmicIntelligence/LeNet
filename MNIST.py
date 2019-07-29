@@ -87,4 +87,26 @@ if __name__ == "__main__":
     os.remove(f3)
     os.remove(f4)
 
+<<<<<<< HEAD
     print("\nMNIST dataset is stored in the 'MNIST' folder")
+=======
+    print("\nMNIST dataset is stored in the 'MNIST' folder")
+
+def load():
+    int_type = np.dtype('int32').newbyteorder('>')
+    nMetaDataBytes = 4 * int_type.itemsize
+
+    data = np.fromfile('MNIST/train-images-idx3-ubyte', dtype='ubyte')
+    magicBytes, nImages, width, height = np.frombuffer( data[:nMetaDataBytes].tobytes(), int_type)
+
+    train_data = data[nMetaDataBytes:].astype(dtype='float32').reshape([nImages, width, height])
+    train_labels = np.fromfile('MNIST/train-labels-idx1-ubyte', dtype='ubyte')[2 * int_type.itemsize:]
+
+    data = np.fromfile('MNIST/t10k-images-idx3-ubyte', dtype='ubyte')
+    magicBytes, nImages, width, height = np.frombuffer(data[:nMetaDataBytes].tobytes(), int_type)
+
+    test_data = data[nMetaDataBytes:].astype(dtype='float32').reshape([nImages, width, height])
+    test_labels = np.fromfile('MNIST/t10k-labels-idx1-ubyte', dtype='ubyte')[2 * int_type.itemsize:]
+
+    return train_data, train_labels, test_data, test_labels
+>>>>>>> 830f7a00ebea4ab7cc18561aa6edba3bb5586f88

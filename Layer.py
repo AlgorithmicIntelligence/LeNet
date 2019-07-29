@@ -5,7 +5,11 @@ class ConvolutionalLayer():
         Fi = np.prod(weights_shape[:3])
         self.shape = weights_shape
         self.weights = np.random.uniform(-2.4/Fi, 2.4/Fi, weights_shape)
+<<<<<<< HEAD
         self.biases = np.random.uniform(-1, 1, weights_shape[-1])
+=======
+        self.biases = np.random.uniform(-2.4/Fi, 2.4/Fi, weights_shape[-1])
+>>>>>>> 830f7a00ebea4ab7cc18561aa6edba3bb5586f88
         self.activation_function = activation_function
         self.pad = pad
         self.stride = stride
@@ -36,7 +40,7 @@ class ConvolutionalLayer():
         
         d_inputs = np.zeros(self.inputs.shape)
         d_weights = np.zeros(self.weights.shape)
-        d_biases = np.zeros(self.biases)
+        d_biases = np.zeros(self.biases.shape)
         if self.pad == "SAME":
             inputs = np.pad(self.inputs, (((self.shape[0]-1)//2, self.shape[0]//2), ((self.shape[1]-1)//2, self.shape[1]//2),(0, 0)), "constant")
             d_inputs = np.pad(d_inputs, (((self.shape[0]-1)//2, self.shape[0]//2), ((self.shape[1]-1)//2, self.shape[1]//2),(0, 0)), "constant")
@@ -55,8 +59,10 @@ class ConvolutionalLayer():
         return d_inputs
 
 class PoolingLayer():
-    def __init__(self, input_filters, size=(2,2), stride=2, mode="MAX"):
-        self.weights = np.random.uniform()
+    def __init__(self, inputs_shape, size=(2,2), stride=2, mode="MAX"):
+        Fi = inputs_shape[-1]
+        self.weights = np.random.uniform(-2.4 / Fi, 2.4 / Fi, inputs_shape[-1]).reshape(1, 1, inputs_shape[-1])
+        self.biases = np.random.uniform(-2.4 / Fi, 2.4 / Fi, (1, 1, inputs_shape[-1]))
         self.size = size
         self.stride = stride
         self.mode = mode
@@ -68,19 +74,27 @@ class PoolingLayer():
                 if self.mode == "MAX":
                     outputs[h, w, :] = np.max(inputs[h*self.stride:h*self.stride + self.size[0], w*self.stride:w*self.stride + self.size[1], :], axis=(1, 2))
                 elif self.mode == "AVERAGE":
-                    outputs[h, w, :] = np.average(inputs[h*self.stride:h*self.stride + self.size[0], w*self.stride:w*self.stride + self.size[1], :], axis=(1, 2))
+                    outputs[h, w, :] = self.weights * np.average(inputs[h*self.stride:h*self.stride + self.size[0], w*self.stride:w*self.stride + self.size[1], :], axis=(1, 2)) + self.biases
         return outputs
-    def backward_propagation(self, d_outputs):
-        d_inputs = np.zeros(self.inputs, dtype=np.float64)
+    def backward_propagation(self, d_outputs, learning_rate):
+        d_inputs = np.zeros(self.inputs.shape)
+        d_weights = np.zeros(self.weights.shape)
+        d_biases = np.zeros(self.biases.shape)
         for h in range(d_outputs.shape[0]):
             for w in range(d_outputs.shape[1]):
-                w_interval = range(w*self.stride, w*self.stride+self.size[0])
+                w_interval = range(w * self.stride, w*self.stride+self.size[0])
                 h_interval = range(h*self.stride, h*self.stride+self.size[1])
                 if self.mode == "MAX":
-                    weights = self.inputs[h_interval, w_interval, :]==np.max(self.inputs[h_interval, w_interval, :], axis=(0, 1))
-                    d_inputs[h_interval, w_interval, :] += d_outputs[h, w, :] * weights
+                    weights = self.inputs[h_interval, w_interval, :] == np.max(self.inputs[h_interval, w_interval, :], axis=(0, 1))
+                    d_inputs[h_interval, w_interval, :] += np.repeat(np.repeat(d_outputs[h, w, :] * weights, 2, axis=0), 2, axis=1)
                 elif self.mode == "AVERAGE":
-                    d_inputs[h_interval, w_interval, :] += d_outputs[h, w, :]/self.size[0]/self.size[1]
+                    d_inputs[h_interval, w_interval, :] += self.weights * np.repeat(np.repeat(d_outputs[h, w, :], 2, axis=0), 2, axis=1) / self.size[0] / self.size[1]
+                    d_weights += d_inputs[h_interval, w_interval, :] * d_outputs[h, w, :] / self.size[0] / self.size[1]
+                    d_biases += d_outputs[h, w, :]
+
+        self.weights -= learning_rate * d_weights
+        self.biases -= learning_rate * d_biases
+
         return d_inputs
 
 class FullyConnectedLayer():
