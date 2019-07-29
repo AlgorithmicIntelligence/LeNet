@@ -5,11 +5,7 @@ class ConvolutionalLayer():
         Fi = np.prod(weights_shape[:3])
         self.shape = weights_shape
         self.weights = np.random.uniform(-2.4/Fi, 2.4/Fi, weights_shape)
-<<<<<<< HEAD
-        self.biases = np.random.uniform(-1, 1, weights_shape[-1])
-=======
-        self.biases = np.random.uniform(-2.4/Fi, 2.4/Fi, weights_shape[-1])
->>>>>>> 830f7a00ebea4ab7cc18561aa6edba3bb5586f88
+        self.biases = np.random.uniform(-2.4/Fi, 2.4/Fi, weights_shape[-1]).reshape(1, 1, 1, -1)
         self.activation_function = activation_function
         self.pad = pad
         self.stride = stride

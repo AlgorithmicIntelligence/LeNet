@@ -86,10 +86,6 @@ if __name__ == "__main__":
     os.remove(f2)
     os.remove(f3)
     os.remove(f4)
-
-<<<<<<< HEAD
-    print("\nMNIST dataset is stored in the 'MNIST' folder")
-=======
     print("\nMNIST dataset is stored in the 'MNIST' folder")
 
 def load():
@@ -109,4 +105,4 @@ def load():
     test_labels = np.fromfile('MNIST/t10k-labels-idx1-ubyte', dtype='ubyte')[2 * int_type.itemsize:]
 
     return train_data, train_labels, test_data, test_labels
->>>>>>> 830f7a00ebea4ab7cc18561aa6edba3bb5586f88
+
