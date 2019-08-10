@@ -3,6 +3,7 @@ from __future__ import ( division, absolute_import, print_function, unicode_lite
 import gzip
 import os
 import sys
+import numpy as np
 
 if sys.version_info >= (3,):
     import urllib.request as urllib2
