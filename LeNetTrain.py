@@ -18,6 +18,8 @@ train_data = np.expand_dims(train_data, axis = -1)
 test_data = np.expand_dims(test_data, axis = -1)
 
 epochs = 20
+batch_size_SDLM = 500
+batch_size = 1
 learning_rate = np.array([0.0005]*2 + [0.0002]*3 + [0.0001]*3 + [0.00005]*4 + [0.00001]*8) * 100
 
 lenet5 = Lenet5.Lenet5()
@@ -33,13 +35,18 @@ for epoch in range(epochs):
     
 
     time_start = time.time()
-    for i in range(len(train_labels)):
-        loss, labels_ = lenet5.forward_propagation(train_data[train_data_index[i]], train_labels[train_data_index[i]])
-        lenet5.backward_propagation(learning_rate[epoch])
+
+    lenet5.forward_propagation(train_data[train_data_index[:batch_size_SDLM]], train_labels[train_data_index[:batch_size_SDLM]])
+    lenet5.SDLM(learning_rate[epoch])
+    print("learning rates in trainable layers:", np.array([lenet5.C1.lr, lenet5.C3.lr, lenet5.C5.lr, lenet5.F6.lr]))
+    
+    for i in range(len(train_labels)//batch_size):
+        loss, labels_ = lenet5.forward_propagation(train_data[train_data_index[i*batch_size:(i+1)*batch_size]], train_labels[train_data_index[i*batch_size:(i+1)*batch_size]])    
+        lenet5.backward_propagation()
         
         time_end = time.time()
         if (i % 10) == 0:
-            print("Training Data Num ", i, "\tlabels = ", train_labels[train_data_index[i]], "\tlabels_ = ", labels_, "\tLoss = ",loss, "\tTime Elapsed = ", time_end - time_start, "\n")
+            print("Training Data Num ", i*batch_size, "\tlabels = ", train_labels[train_data_index[i*batch_size:(i+1)*batch_size]], "\tlabels_ = ", labels_, "\tLoss = ",loss, "\tTime Elapsed = ", time_end - time_start, "\n")
             with open("Weights\\LeNetWeights"+str(i)+".pkl","wb") as f:
                 pickle.dump(lenet5, f)
     
