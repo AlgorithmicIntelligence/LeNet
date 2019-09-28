@@ -7,8 +7,8 @@ import os
 
 # data pre-processing
 train_data, train_labels, test_data, test_labels = MNIST.load()
-train_data = np.pad(train_data, ((0, ), (2, ), (2, ) ), "constant")
-test_data = np.pad(test_data, ((0, ), (2, ), (2, ) ), "constant")
+train_data = np.pad(train_data, ((0, ), (2, ), (2, )), "constant")
+test_data = np.pad(test_data, ((0, ), (2, ), (2, )), "constant")
 
 normalize_min, normalize_max = -0.1, 1.175
 train_data = train_data/255*(normalize_max-normalize_min) + normalize_min
@@ -22,7 +22,7 @@ batch_size_SDLM = 500
 batch_size = 32
 learning_rate = np.array([0.0005]*2 + [0.0002]*3 + [0.0001]*3 + [0.00005]*4 + [0.00001]*8)
 
-restore_weights_path = "./Weights/LeNetWeights8320.pkl"
+restore_weights_path = "./Weights/LeNetWeights_6000.pkl"
 if os.path.isfile(restore_weights_path):
     with open(restore_weights_path, "rb") as f:
         lenet5 = pickle.load(f)
@@ -56,7 +56,7 @@ for epoch in range(epochs):
             print("Loss = ", loss, "\tTime Elapsed = ", time_end-time_start,"\n")
             if not os.path.isdir("./Weights/"):
                 os.mkdir("./Weights/")
-            with open("./Weights/LeNetWeights"+str((i+1)*batch_size)+".pkl", "wb") as f:
+            with open("./Weights/LeNetWeights_"+str((i+1)*batch_size)+".pkl", "wb") as f:
                 pickle.dump(lenet5, f)
     
     print("training time = ", time_end - time_start, "\n")
