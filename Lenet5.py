@@ -31,7 +31,7 @@ class Lenet5():
     def backward_propagation(self):
         d_inputs_rbf = self.RBF.backward_propagation()
         d_inputs_f6 = self.F6.backward_propagation(d_inputs_rbf)
-        d_inputs_f6 = d_inputs_f6.reshape([d_inputs_f6.shape[0],1 ,1, d_inputs_f6.shape[-1]])
+        d_inputs_f6 = d_inputs_f6.reshape([d_inputs_f6.shape[0], 1, 1, d_inputs_f6.shape[-1]])
         d_inputs_c5 = self.C5.backward_propagation(d_inputs_f6)
         d_inputs_s4 = self.S4.backward_propagation(d_inputs_c5)
         d_inputs_c3 = self.C3.backward_propagation(d_inputs_s4)
@@ -41,7 +41,7 @@ class Lenet5():
     def SDLM(self, learning_rate):
         d2_inputs_rbf = self.RBF.SDLM()
         d2_inputs_f6 = self.F6.SDLM(d2_inputs_rbf, learning_rate)
-        d2_inputs_f6 = d2_inputs_f6.reshape([d2_inputs_f6.shape[0],1 ,1, d2_inputs_f6.shape[-1]])
+        d2_inputs_f6 = d2_inputs_f6.reshape([d2_inputs_f6.shape[0], 1 , 1, d2_inputs_f6.shape[-1]])
         d2_inputs_c5 = self.C5.SDLM(d2_inputs_f6, learning_rate)
         d2_inputs_s4 = self.S4.SDLM(d2_inputs_c5, learning_rate)
         d2_inputs_c3 = self.C3.SDLM(d2_inputs_s4, learning_rate)
