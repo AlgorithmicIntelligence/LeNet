@@ -10,9 +10,9 @@ C3_combination = [[0, 1, 2], [1, 2, 3], [2, 3, 4], [3, 4, 5], [4, 5, 0], [5, 0, 
 class Lenet5():
     def __init__(self):
         self.C1 = Layer.ConvolutionalLayer([5, 5, 1, 6], pad="VALID", activation_function="SQUASHING")
-        self.S2 = Layer.PoolingLayer([2, 2, 6], mode="AVERAGE")
+        self.S2 = Layer.PoolingLayer([2, 2, 6], mode="AVERAGE", activation_function="SQUASHING")
         self.C3 = Layer.ConvolutionalCombinationLayer([5, 5, 16], C3_combination, pad="VALID", activation_function="SQUASHING")
-        self.S4 = Layer.PoolingLayer([2, 2, 16], mode="AVERAGE")
+        self.S4 = Layer.PoolingLayer([2, 2, 16], mode="AVERAGE", activation_function="SQUASHING")
         self.C5 = Layer.ConvolutionalLayer([5, 5, 16, 120], pad="VALID", activation_function="SQUASHING")
         self.F6 = Layer.FullyConnectedLayer([120, 84], activation_function="SQUASHING")
         self.RBF = Layer.RBFLayer(RBF_BITMAP.rbf_bitmap())
