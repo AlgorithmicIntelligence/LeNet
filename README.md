@@ -12,13 +12,13 @@ Data Pre-processing:
 Architecture of CNN:
 1. conv5x5 with 6 filters, activation = 1.7159 * tanh(2/3 * x)
 2. average pooling, applied weights and biases on each channel, activation = 1.7159 * tanh(2/3 * x)
-3. conv5x5 with 16 filters, activation = 1.7159 * tanh(2/3 * x), but the inputs are combination of the previous layer's outputs
-[1 X       X X X     X X X X   X X]
-[2 X X       X X X     X X X X   X]
-[3 X X X       X X X     X   X X X]
-[4   X X X     X X X X     X   X X]
-[5     X X X     X X X X   X X   X]
-[6       X X X     X X X X   X X X]
+3. conv5x5 with 16 filters, activation = 1.7159 * tanh(2/3 * x), but the inputs are combination of the previous layer's outputs, as below:
+(1) X       X X X     X X X X   X X
+(2) X X       X X X     X X X X   X
+(3) X X X       X X X     X   X X X
+(4)   X X X     X X X X     X   X X
+(5)     X X X     X X X X   X X   X
+(6)       X X X     X X X X   X X X
 4. average pooling, applied weights and biases on each channel, activation = 1.7159 * tanh(2/3 * x)
 5. conv5x5 with 120 filters, activation = 1.7159 * tanh(2/3 * x)
 6. fully with 84 filters, activation = 1.7159 * tanh(2/3 * x)
