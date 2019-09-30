@@ -20,6 +20,7 @@ Architecture of CNN:
 4   X X X     X X X X     X   X X
 5     X X X     X X X X   X X   X
 6       X X X     X X X X   X X X
+
 4. average pooling, applied weights and biases on each channel, activation = 1.7159 * tanh(2/3 * x)
 5. conv5x5 with 120 filters, activation = 1.7159 * tanh(2/3 * x)
 6. fully with 84 filters, activation = 1.7159 * tanh(2/3 * x)
