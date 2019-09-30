@@ -15,7 +15,6 @@ Architecture of CNN:
 3. conv5x5 with 16 filters, activation = 1.7159 * tanh(2/3 * x), but the inputs are combination of the previous layer's outputs, as below:
 
 1 X - - - X X X - - X X X X - X X
-
 2 X X       X X X     X X X X   X
 
 3 X X X       X X X     X   X X X
