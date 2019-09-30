@@ -4,6 +4,7 @@ import Lenet5
 import MNIST
 import time
 import os
+import matplotlib.pyplot as plt
 
 # data pre-processing
 train_data, train_labels, test_data, test_labels = MNIST.load()
@@ -19,10 +20,11 @@ test_data = np.expand_dims(test_data, axis=-1)
 
 epochs = 20
 batch_size_SDLM = 500
-batch_size = 32
+batch_size_train = 1
+batch_size_test = 2000
 learning_rate = np.array([0.0005]*2 + [0.0002]*3 + [0.0001]*3 + [0.00005]*4 + [0.00001]*8)
 
-restore_weights_path = "./Weights/LeNetWeights_6000.pkl"
+restore_weights_path = "./Weights/LeNetWeightsFinal.pkl"
 if os.path.isfile(restore_weights_path):
     with open(restore_weights_path, "rb") as f:
         lenet5 = pickle.load(f)
@@ -30,12 +32,14 @@ else:
     lenet5 = Lenet5.Lenet5()
 
 train_loss_list = list()
+train_accuracy_list = list()
 test_loss_list = list()
+test_accuracy_list = list()
 train_data_index = np.arange(len(train_labels))
 
 for epoch in range(epochs):
     print("=================================================")
-    print("epoch \t", epoch, "\n")
+    print("epoch \t", epoch+1, "\n")
     np.random.shuffle(train_data_index)
 
     time_start = time.time()
@@ -44,38 +48,58 @@ for epoch in range(epochs):
     lenet5.SDLM(learning_rate[epoch])
     print("learning rates in trainable layers:", np.array([lenet5.C1.lr, lenet5.S2.lr, lenet5.C3.lr, lenet5.S4.lr, lenet5.C5.lr, lenet5.F6.lr]))
     
-    for i in range(len(train_labels)//batch_size):
-        loss, labels_ = lenet5.forward_propagation(train_data[train_data_index[i*batch_size:(i+1)*batch_size]], train_labels[train_data_index[i*batch_size:(i+1)*batch_size]])    
+    for i in range(len(train_labels)//batch_size_train):
+        loss, labels_ = lenet5.forward_propagation(train_data[train_data_index[i*batch_size_train:(i+1)*batch_size_train]], train_labels[train_data_index[i*batch_size_train:(i+1)*batch_size_train]])
         lenet5.backward_propagation()
         
         time_end = time.time()
-        if ((i+1) % 5) == 0:
-            print("Training Data Num ", (i+1)*batch_size)
-            print("labels(GT) = ", train_labels[train_data_index[i*batch_size:(i+1)*batch_size]])
+        if ((i+1) % 25) == 0:
+            print("Training Data Num ", (i+1)*batch_size_train)
+            print("labels(GT) = ", train_labels[train_data_index[i*batch_size_train:(i+1)*batch_size_train]])
             print("labels(PD) = ", labels_)
-            print("Loss = ", loss, "\tTime Elapsed = ", time_end-time_start,"\n")
+            print("Loss = ", loss, "\tTime Elapsed = ", time_end-time_start, "\n")
             if not os.path.isdir("./Weights/"):
                 os.mkdir("./Weights/")
-            with open("./Weights/LeNetWeights_"+str((i+1)*batch_size)+".pkl", "wb") as f:
+            with open("./Weights/LeNetWeights_"+str((i+1)*batch_size_train)+".pkl", "wb") as f:
                 pickle.dump(lenet5, f)
     
     print("training time = ", time_end - time_start, "\n")
-    
+
+    time_start = time.time()
     loss = 0
-    for i in range(len(train_labels)):
-        loss_, _ = lenet5.forward_propagation(train_data[i:i+1], train_labels[i:i+1])
+    accuracy = 0
+    for i in range(len(train_labels)//batch_size_test):
+        loss_, label_ = lenet5.forward_propagation(train_data[i*batch_size_test:(i+1)*batch_size_test], train_labels[i*batch_size_test:(i+1)*batch_size_test])
         loss += loss_
+        accuracy += np.sum(np.equal(label_,train_labels[i*batch_size_test:(i+1)*batch_size_test]))
     loss /= len(train_data_index)
+    accuracy /= len(train_data_index)
     train_loss_list.append(loss)
-    print("training loss = ", loss, "\n")
-    
+    train_accuracy_list.append(accuracy)
+    time_end = time.time()
+    print("training loss = ", loss, "\ttraining accuracy = ", accuracy, "\ttime elapse = ", time_end - time_start, "\n")
+
+    time_start = time.time()
     loss = 0
-    for i in range(len(test_labels)):
-        loss_, _ = lenet5.forward_propagation(test_data[i:i+1], test_labels[i:i+1])
+    accuracy = 0
+    for i in range(len(test_labels)//batch_size_test):
+        loss_, label_ = lenet5.forward_propagation(test_data[i * batch_size_test:(i + 1) * batch_size_test], test_labels[i * batch_size_test:(i + 1) * batch_size_test])
         loss += loss_
-    loss /= len(test_labels)  
+        accuracy += np.sum(np.equal(label_, test_labels[i * batch_size_test:(i + 1) * batch_size_test]))
+    loss /= len(test_labels)
+    accuracy /= len(test_labels)
     test_loss_list.append(loss)
-    print("testing loss = ", loss, "\n")
+    test_accuracy_list.append(accuracy)
+    time_end = time.time()
+    print("testing loss = ", loss, "\ttesting accuracy = ", accuracy, "\ttime elapse = ", time_end - time_start, "\n")
 
 with open("./Weights/LeNetWeightsFinal.pkl", "wb") as f:
     pickle.dump(lenet5, f)
+
+x = np.arange(epochs)
+plt.xlabel('epochs')
+plt.ylabel('Accuracy')
+plt.plot(x, train_accuracy_list)
+plt.plot(x, test_accuracy_list)
+plt.legend(['training accuracy', 'testing accuracy'], loc='upper right')
+plt.show()
