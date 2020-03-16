@@ -38,6 +38,9 @@ Fully, weights initialize with (normal distribution * sqrt(2/Fi)). Refer to Xavi
 20 epochs, learning rate are [0.0005]*2  [0.0002]*3  [0.0001]*3  [0.00005]*4  [0.00001]*8,
 but before training in each epochs, we will utilize Stochastic Diagonal Levenberg-Marquaedt with 500 training data to refine the learning rate in each layer.
 
+#Result
+
+[](Accuracy.png)
 
 ##Reference
 
