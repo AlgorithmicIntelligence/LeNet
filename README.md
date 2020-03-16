@@ -40,7 +40,7 @@ but before training in each epochs, we will utilize Stochastic Diagonal Levenber
 
 #Result
 
-[](Accuracy.png)
+<img src="https://github.com/AlgorithmicIntelligence/LeNet/blob/master/Accuracy.png" width="900">
 
 ##Reference
 
